@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+        - name: flask-app
+          image: opika-flask_app:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: RABBIT_HOST
+              value: rabbit
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app-service
+spec:
+  selector:
+    app: flask-app
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbit
+  template:
+    metadata:
+      labels:
+        app: rabbit
+    spec:
+      containers:
+        - name: rabbit
+          image: rabbitmq:3-management
+          ports:
+            - containerPort: 15672
+            - containerPort: 5672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: admin
+            - name: RABBITMQ_DEFAULT_PASS
+              value: mypass
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbit-service
+spec:
+  selector:
+    app: rabbit
+  ports:
+    - protocol: TCP
+      port: 15672
+      targetPort: 15672
+    - protocol: TCP
+      port: 5672
+      targetPort: 5672
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery_worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery_worker
+  template:
+    metadata:
+      labels:
+        app: celery_worker
+    spec:
+      containers:
+        - name: celery_worker
+          image: opika-celery_worker:latest
+          user: nobody
+          env:
+            - name: RABBIT_HOST
+              value: rabbit
