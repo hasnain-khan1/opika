@@ -9,7 +9,7 @@ Install the  [Docker](https://docs.docker.com/engine/install/) according to your
 ## Usage
 Set the up the Celery app configurations
 ```python
-celery_app = Celery('simple_worker',
+celery_app = Celery('celery_worker',
                     broker=f'amqp://{user}:{password}@{ip}:5672',
                     backend='rpc://')
 

@@ -6,7 +6,7 @@ flask_obj = Flask(__name__)
 Celery setting for rabbitMQ.it requires user:password@ip to connect to its server.
 For backend I am using celery default rpc,
 """
-celery_app = Celery('simple_worker',
+celery_app = Celery('celery_worker',
                     broker='amqp://admin:mypass@rabbit:5672',
                     backend='rpc://')
 
