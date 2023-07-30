@@ -32,6 +32,7 @@ app = Celery('tasks',
 def longtime_add():
     """
     profile -> app profiler to measure the performance of function
+    this function will execute the scrapper and will store the data in .db file.
     """
     profiler = Profiler()
     profiler.start()
