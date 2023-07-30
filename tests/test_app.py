@@ -9,6 +9,7 @@ from unittest.mock import Mock
 
 @pytest.fixture
 def client():
+    """Flask client to interact with api's"""
     flask_obj.config['TESTING'] = True
     with flask_obj.test_client() as client:
         yield client
@@ -37,10 +38,11 @@ def test_call_method(client, mocker):
 def test_get_status(client, mocker):
     # Mock the AsyncResult object returned by Celery
     async_result_mock = Mock()
-    async_result_mock.state = 'SUCCESS'  # Set the state to a sample value, you can change this as needed
+    """Set the state to a sample value, Possible responses (None,"""
+    async_result_mock.state = 'SUCCESS'
     mocker.patch('flask_app.app.celery_app.AsyncResult', return_value=async_result_mock)
 
-    # Make a request to the Flask route with a task ID
+    # Make a request to the Flask route with a dummy task ID
     task_id = 'awe5t-5mslflk-34rln64tyr'
     response = client.get(f'/task_status/{task_id}')
 
@@ -58,10 +60,10 @@ def test_get_status(client, mocker):
 def test_task_result(client, mocker):
     # Mock the AsyncResult object returned by Celery
     async_result_mock = Mock()
-    async_result_mock.result = 42  # Set the result to a sample value
+    async_result_mock.result = True  # Set the result to a dummy value
     mocker.patch('flask_app.app.celery_app.AsyncResult', return_value=async_result_mock)
 
-    # Make a request to the Flask route with a task ID
+    # Make a request to the Flask route with a dummy task ID
     task_id = 'awe5t-5mslflk-34rln64tyr'
     response = client.get(f'/task_result/{task_id}')
 

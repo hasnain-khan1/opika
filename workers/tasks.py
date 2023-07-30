@@ -47,4 +47,4 @@ def longtime_add():
 
     logger.info(profiler.output_text(unicode=True, color=True))
 
-    return
+    return True
